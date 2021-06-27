@@ -54,6 +54,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.jpaoletti</groupId>
+			<artifactId>jpm-core</artifactId>
+			<version>1.5.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>
