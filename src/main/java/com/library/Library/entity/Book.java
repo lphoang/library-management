@@ -26,18 +26,24 @@ public class Book implements Serializable {
     private String thumbnail;
     private String bookId;
 
-    public Book(String name, String releaseYear, String description, Double score, Double price, String thumbnail) {
+    public Book(
+            String name,
+            String releaseYear,
+            String description,
+            Double score,
+            Double price,
+            String thumbnail,
+            String bookId) {
         this.name = name;
         this.releaseYear = releaseYear;
         this.description = description;
         this.score = score;
         this.price = price;
         this.thumbnail = thumbnail;
+        this.bookId = bookId;
     }
 
-    public Book() {
-
-    }
+    public Book() { }
 
     public String getBookId() {
         return bookId;
