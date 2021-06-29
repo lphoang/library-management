@@ -27,7 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/**")
                     .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated().and()
+                .formLogin();
     }
 
     @Override

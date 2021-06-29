@@ -18,7 +18,9 @@ public class EmailService implements EmailSender {
 
     private final static Logger LOGGER = LoggerFactory
             .getLogger(EmailService.class);
+
     private final JavaMailSender mailSender;
+
     @Override
     @Async
     public void send(String to, String email){
@@ -29,7 +31,7 @@ public class EmailService implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("login@phuochoang.com");
+            helper.setFrom("lephuochoang98tcv@gmail.com");
             mailSender.send(mimeMessage);
         }catch(MessagingException e){
             LOGGER.error("Failed to send an email", e);
