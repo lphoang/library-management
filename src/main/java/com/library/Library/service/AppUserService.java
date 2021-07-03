@@ -9,8 +9,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,13 +27,13 @@ public class AppUserService implements UserDetailsService {
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
     }
 
-    public String signUpUser(AppUser appUser){
+    public List<Object> signUpUser(AppUser appUser){
         boolean userExists = appUserRepository
                 .findByEmail(appUser.getEmail())
                 .isPresent();
@@ -40,10 +43,8 @@ public class AppUserService implements UserDetailsService {
             throw new IllegalStateException("Email is already taken");
         }
 
-        String encodedPassword = bCryptPasswordEncoder
-                .encode(appUser.getPassword());
-
-        appUser.setPassword(encodedPassword);
+        appUser.setPassword(bCryptPasswordEncoder
+                .encode(appUser.getPassword()));
 
         appUserRepository.save(appUser);
 
@@ -59,7 +60,7 @@ public class AppUserService implements UserDetailsService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
         //TODO: SEND email
-        return token;
+        return Arrays.asList(token, appUser);
     }
 
     public void enableAppUser(String email) {

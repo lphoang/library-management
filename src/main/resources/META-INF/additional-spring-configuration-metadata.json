@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "mail.smtp.starttls.enable",
+      "type": "java.lang.String",
+      "description": "Description for mail.smtp.starttls.enable."
+    },
+    {
+      "name": "jwt.expiration.time",
+      "type": "java.lang.String",
+      "description": "Description for jwt.expiration.time."
+    }
+  ] }

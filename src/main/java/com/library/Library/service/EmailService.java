@@ -4,6 +4,7 @@ import com.library.Library.service.impl.EmailSender;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -31,7 +32,7 @@ public class EmailService implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("lephuochoang98tcv@gmail.com");
+            helper.setFrom("verification_email@gmail.com");
             mailSender.send(mimeMessage);
         }catch(MessagingException e){
             LOGGER.error("Failed to send an email", e);

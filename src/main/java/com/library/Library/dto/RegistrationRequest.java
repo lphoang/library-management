@@ -1,14 +1,12 @@
-package com.library.Library.model.request;
+package com.library.Library.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-
+import lombok.*;
+//DTO = Data transfer object
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Data
 public class RegistrationRequest {
     private final String firstName;
     private final String lastName;

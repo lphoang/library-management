@@ -1,15 +1,23 @@
 package com.library.Library.service;
 
+import com.library.Library.dto.AuthenticateResponse;
+import com.library.Library.dto.LoginRequest;
+import com.library.Library.dto.RegistrationRequest;
 import com.library.Library.entity.AppUser;
 import com.library.Library.constant.AppUserRole;
-import com.library.Library.model.request.RegistrationRequest;
+import com.library.Library.security.JwtProvider;
 import com.library.Library.service.impl.EmailSender;
 import com.library.Library.entity.ConfirmationToken;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -20,44 +28,47 @@ public class RegistrationService {
 
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
-    public String register(RegistrationRequest request){
+    public List<Object> register(RegistrationRequest request) {
         boolean isValidEmail = emailValidator
                 .test(request.getEmail());
-        if(!isValidEmail){
+        if (!isValidEmail) {
             throw new IllegalStateException("Email is not valid");
         }
 
-        String token = appUserService.signUpUser(
-          new AppUser(
-                  request.getFirstName(),
-                  request.getLastName(),
-                  request.getEmail(),
-                  request.getPassword(),
-                  AppUserRole.USER
-          )
+        List<Object> userInfo = appUserService.signUpUser(
+                new AppUser(
+                        request.getFirstName(),
+                        request.getLastName(),
+                        request.getEmail(),
+                        request.getPassword(),
+                        AppUserRole.USER
+                )
         );
+        String token = (String) userInfo.get(0);
         String link = "http://localhost:8080/user/register/confirm?token=" + token;
         emailSender.send(
                 request.getEmail(),
                 buildEmail(request.getFirstName(), link));
-        return token;
+        return userInfo;
     }
 
     @Transactional
-    public String confirmToken(String token){
+    public void confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() ->
                         new IllegalStateException("Token not found"));
 
-        if (confirmationToken.getConfirmedAt() != null){
+        if (confirmationToken.getConfirmedAt() != null) {
             throw new IllegalStateException("Email is already confirmed");
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiredAt();
 
-        if(expiredAt.isBefore(LocalDateTime.now())){
+        if (expiredAt.isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("Token expired");
         }
 
@@ -65,7 +76,16 @@ public class RegistrationService {
         appUserService.enableAppUser(
                 confirmationToken.getAppUser().getEmail()
         );
-                return "Confirmed";
+    }
+
+    public AuthenticateResponse login(LoginRequest request) {
+        Authentication auth = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String accessToken = jwtProvider.generateToken(auth);
+        return new AuthenticateResponse(accessToken, request.getEmail());
     }
 
     private String buildEmail(String name, String link) {
