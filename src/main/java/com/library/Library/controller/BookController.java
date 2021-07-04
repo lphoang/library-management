@@ -2,13 +2,11 @@ package com.library.Library.controller;
 
 import com.library.Library.entity.Book;
 import com.library.Library.service.BookService;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/book")
@@ -38,6 +36,7 @@ public class BookController {
         return new ResponseEntity<>(newBook, HttpStatus.CREATED);
     }
 
+    // TODO Change /update to update/{id}
     @PutMapping("/update")
     public ResponseEntity<Book> updateBookDetails(@RequestBody Book book){
         Book newBookDetails = bookService.updateBook(book);

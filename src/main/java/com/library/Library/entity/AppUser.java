@@ -18,8 +18,8 @@ import java.util.Collections;
 @Entity
 public class AppUser implements UserDetails {
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator="uuid2")
+    @GenericGenerator(name="uuid2", strategy = "uuid2")
     private String id;
     private String firstName;
     private String lastName;

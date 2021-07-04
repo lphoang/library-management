@@ -15,8 +15,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Book implements Serializable {
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator="uuid2")
+    @GenericGenerator(name="uuid2", strategy = "uuid2")
     @Column(nullable = false, updatable = false)
     private String id;
     @Column(nullable = false, updatable = false)
@@ -24,7 +24,8 @@ public class Book implements Serializable {
     @Column(nullable = false, updatable = false)
     private String author;
     private String title;
-    private String releaseYear;
+    private String releaseDate;
+    @Lob
     private String description;
     private Double score;
     private Double price;
@@ -34,7 +35,7 @@ public class Book implements Serializable {
             String bookGenre,
             String author,
             String title,
-            String releaseYear,
+            String releaseDate,
             String description,
             Double score,
             Double price,
@@ -42,7 +43,7 @@ public class Book implements Serializable {
         this.bookGenre = bookGenre;
         this.author = author;
         this.title = title;
-        this.releaseYear = releaseYear;
+        this.releaseDate = releaseDate;
         this.description = description;
         this.score = score;
         this.price = price;
@@ -54,7 +55,7 @@ public class Book implements Serializable {
         return "Book{" +
                 "id = " + id + '\'' +
                 ", title = " + title + '\'' +
-                ", release year = " + releaseYear + '\'' +
+                ", release date = " + releaseDate + '\'' +
                 ", score = " + score + '\'' +
                 ", price = " + price + '\'' +
                 ", description = " + description + '\'' +

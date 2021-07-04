@@ -9,11 +9,13 @@ import com.library.Library.repository.BookGenreRepository;
 import com.library.Library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
+//Try adding @Transactional over the service method where you are trying to access lob field object.
+//When error "org.hibernate.HibernateException: Unable to access lob stream" happening
+@Transactional
 @Service
 public class BookService {
     private final BookRepository bookRepository;
@@ -28,6 +30,7 @@ public class BookService {
         this.authorRepository = authorRepository;
         this.bookGenreRepository = bookGenreRepository;
     }
+
 
     public Book addBook(Book book){
         boolean isBookExist = bookRepository

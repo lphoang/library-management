@@ -46,7 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             "/webjars/**")
                     .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated().and()
+                .formLogin();
     }
 
     @Override
