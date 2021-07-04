@@ -2,6 +2,7 @@ package com.library.Library.entity;
 
 import com.library.Library.constant.AppUserRole;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,17 +17,10 @@ import java.util.Collections;
 @NoArgsConstructor
 @Entity
 public class AppUser implements UserDetails {
-    @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
-            allocationSize = 1
-    )
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
-    )
-    private Long id;
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    private String id;
     private String firstName;
     private String lastName;
     private String email;

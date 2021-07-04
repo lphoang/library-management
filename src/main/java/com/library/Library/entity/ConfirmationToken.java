@@ -3,6 +3,7 @@ package com.library.Library.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,17 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 public class ConfirmationToken {
-    @SequenceGenerator(
-            name = "confirmation_token_sequence",
-            sequenceName = "confirmation_token_sequence",
-            allocationSize = 1
-    )
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "confirmation_token_sequence"
-    )
-    private Long id;
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    private String id;
 
     @Column(nullable = false)
     private String token;

@@ -7,16 +7,16 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
-public class Author {
+@NoArgsConstructor
+public class BookGenre {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
-    private String fullName;
+    private String title;
 
-    public Author(String fullName) {
-        this.fullName = fullName;
+    public BookGenre(String title) {
+        this.title = title;
     }
 }

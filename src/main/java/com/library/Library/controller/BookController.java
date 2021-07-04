@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/book")
@@ -20,7 +21,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBook(@PathVariable Long id){
+    public ResponseEntity<Book> getBook(@PathVariable String id){
         Book book = bookService.findBookById(id);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
@@ -44,7 +45,7 @@ public class BookController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Book> deleteBook(@PathVariable Long id){
+    public ResponseEntity<Book> deleteBook(@PathVariable String id){
         bookService.deleteBook(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
