@@ -1,4 +1,4 @@
-package com.library.Library.dto;
+package com.library.Library.dto.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticateResponse {
-    private String accessToken;
+public class LoginRequest {
     private String email;
+    private String password;
 }

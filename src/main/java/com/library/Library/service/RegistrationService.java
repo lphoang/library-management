@@ -1,8 +1,8 @@
 package com.library.Library.service;
 
-import com.library.Library.dto.AuthenticateResponse;
-import com.library.Library.dto.LoginRequest;
-import com.library.Library.dto.RegistrationRequest;
+import com.library.Library.dto.responses.AuthenticateResponse;
+import com.library.Library.dto.requests.LoginRequest;
+import com.library.Library.dto.requests.RegistrationRequest;
 import com.library.Library.entity.AppUser;
 import com.library.Library.constant.AppUserRole;
 import com.library.Library.security.JwtProvider;

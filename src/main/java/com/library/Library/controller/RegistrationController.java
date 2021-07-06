@@ -1,8 +1,8 @@
 package com.library.Library.controller;
 
-import com.library.Library.dto.AuthenticateResponse;
-import com.library.Library.dto.LoginRequest;
-import com.library.Library.dto.RegistrationRequest;
+import com.library.Library.dto.responses.AuthenticateResponse;
+import com.library.Library.dto.requests.LoginRequest;
+import com.library.Library.dto.requests.RegistrationRequest;
 import com.library.Library.service.RegistrationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
