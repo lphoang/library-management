@@ -1,5 +1,6 @@
 package com.library.Library.service;
 
+import com.library.Library.dto.responses.RegistrationResponse;
 import com.library.Library.entity.AppUser;
 import com.library.Library.entity.ConfirmationToken;
 import com.library.Library.repository.AppUserRepository;
@@ -33,11 +34,11 @@ public class AppUserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
     }
 
-    public List<Object> signUpUser(AppUser appUser){
+    public RegistrationResponse signUpUser(AppUser appUser) {
         boolean userExists = appUserRepository
                 .findByEmail(appUser.getEmail())
                 .isPresent();
-        if(userExists){
+        if (userExists) {
             throw new IllegalStateException("Email is already taken");
         }
 
@@ -47,18 +48,18 @@ public class AppUserService implements UserDetailsService {
         appUserRepository.save(appUser);
 
         // TODO: SEND confirmation token --> DONE
-        String token  = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
-               token,
-               LocalDateTime.now(),
-               LocalDateTime.now().plusMinutes(15),
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
                 appUser
         );
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
         //TODO: SEND email
-        return Arrays.asList(token, appUser);
+        return new RegistrationResponse(token, appUser);
     }
 
     public void enableAppUser(String email) {

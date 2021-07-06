@@ -3,8 +3,10 @@ package com.library.Library.service;
 import com.library.Library.dto.responses.AuthenticateResponse;
 import com.library.Library.dto.requests.LoginRequest;
 import com.library.Library.dto.requests.RegistrationRequest;
+import com.library.Library.dto.responses.RegistrationResponse;
 import com.library.Library.entity.AppUser;
 import com.library.Library.constant.AppUserRole;
+import com.library.Library.repository.AppUserRepository;
 import com.library.Library.security.JwtProvider;
 import com.library.Library.service.impl.EmailSender;
 import com.library.Library.entity.ConfirmationToken;
@@ -17,13 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class RegistrationService {
 
     private final AppUserService appUserService;
+    private final AppUserRepository appUserRepository;
     private final EmailValidator emailValidator;
 
     private final ConfirmationTokenService confirmationTokenService;
@@ -31,23 +33,40 @@ public class RegistrationService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    public List<Object> register(RegistrationRequest request) {
+    public RegistrationResponse register(RegistrationRequest request) {
+        //Exception for empty input
+        if(request.getEmail() == null ) {
+            throw new IllegalStateException("Email is required");
+        }
+        if(request.getPassword() == null ){
+            throw new IllegalStateException("Password is required");
+        }
+        if(request.getFirstName() == null ) {
+            throw new IllegalStateException("Firstname is required");
+        }
+        if(request.getLastName() == null ) {
+            throw new IllegalStateException("Lastname is required");
+        }
+        if(request.getAge() == null ){
+            throw new IllegalStateException("Age is required");
+        }
         boolean isValidEmail = emailValidator
                 .test(request.getEmail());
         if (!isValidEmail) {
             throw new IllegalStateException("Email is not valid");
         }
 
-        List<Object> userInfo = appUserService.signUpUser(
+        RegistrationResponse userInfo = appUserService.signUpUser(
                 new AppUser(
                         request.getFirstName(),
                         request.getLastName(),
+                        request.getAge(),
                         request.getEmail(),
                         request.getPassword(),
                         AppUserRole.USER
                 )
         );
-        String token = (String) userInfo.get(0);
+        String token = userInfo.getVerifiedToken();
         String link = "http://localhost:8080/user/register/confirm?token=" + token;
         emailSender.send(
                 request.getEmail(),
@@ -79,6 +98,25 @@ public class RegistrationService {
     }
 
     public AuthenticateResponse login(LoginRequest request) {
+        //Exception for empty input
+        if(request.getEmail() == null ){
+            throw new IllegalStateException("Email is required");
+        }
+        if(request.getPassword() == null ){
+            throw new IllegalStateException("Password is required");
+        }
+        //Exception for access denied
+        boolean isExist = appUserRepository.findByEmail(request.getEmail()).isPresent();
+        if(!isExist){
+            throw new IllegalStateException("Unauthorized");
+        }else{
+            //Exception for not verifying email
+            boolean isVerified = appUserRepository.findByEmail(request.getEmail()).get().getEnabled();
+            if(!isVerified){
+                throw new IllegalStateException("Verify your email to login");
+            }
+        }
+
         Authentication auth = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         request.getEmail(),

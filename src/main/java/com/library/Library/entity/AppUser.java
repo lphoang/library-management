@@ -8,6 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -21,9 +23,15 @@ public class AppUser implements UserDetails {
     @GeneratedValue(generator="uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
     private String id;
+    @Column(nullable = false)
     private String firstName;
+    @Column(nullable = false)
     private String lastName;
+    @Column(nullable = false)
     private String email;
+    @Column(nullable = false)
+    private Integer age;
+    @Column(nullable = false)
     private String password;
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
@@ -34,11 +42,13 @@ public class AppUser implements UserDetails {
     public AppUser(
             String firstName,
             String lastName,
+            Integer age,
             String email,
             String password,
             AppUserRole appUserRole) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.age = age;
         this.email = email;
         this.password = password;
         this.appUserRole = appUserRole;
