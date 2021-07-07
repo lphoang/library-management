@@ -4,6 +4,7 @@ import com.library.Library.dto.responses.AuthenticateResponse;
 import com.library.Library.dto.requests.LoginRequest;
 import com.library.Library.dto.requests.RegistrationRequest;
 import com.library.Library.dto.responses.RegistrationResponse;
+import com.library.Library.dto.responses.UserResponse;
 import com.library.Library.entity.AppUser;
 import com.library.Library.constant.AppUserRole;
 import com.library.Library.repository.AppUserRepository;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.lang.String;
+import java.util.Optional;
 
 @Service
 public class RegistrationService {
@@ -139,13 +141,26 @@ public class RegistrationService {
             }
         }
 
+        Optional<AppUser> appUser = appUserRepository.findByEmail(request.getEmail());
+
         Authentication auth = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(auth);
         String accessToken = jwtProvider.generateToken(auth, AppUserRole.USER);
-        return new AuthenticateResponse(accessToken, request.getEmail());
+        return new AuthenticateResponse(accessToken, new UserResponse(
+                appUser.get().getId(),
+                appUser.get().getFirstName(),
+                appUser.get().getLastName(),
+                appUser.get().getEmail(),
+                appUser.get().getAge(),
+                appUser.get().getPassword(),
+                appUser.get().getAppUserRole(),
+                appUser.get().getUsername(),
+                appUser.get().getEnabled(),
+                appUser.get().getLocked()
+        ));
     }
 
     private String buildEmail(String name, String link) {

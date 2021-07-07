@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegistrationResponse {
     private String verifiedToken;
-    private AppUser appUser;
+    private UserResponse user;
 }

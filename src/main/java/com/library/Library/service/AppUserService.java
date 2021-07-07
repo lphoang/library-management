@@ -1,6 +1,7 @@
 package com.library.Library.service;
 
 import com.library.Library.dto.responses.RegistrationResponse;
+import com.library.Library.dto.responses.UserResponse;
 import com.library.Library.entity.AppUser;
 import com.library.Library.entity.ConfirmationToken;
 import com.library.Library.repository.AppUserRepository;
@@ -59,7 +60,18 @@ public class AppUserService implements UserDetailsService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
         //TODO: SEND email
-        return new RegistrationResponse(token, appUser);
+        return new RegistrationResponse(token, new UserResponse(
+                appUser.getId(),
+                appUser.getFirstName(),
+                appUser.getLastName(),
+                appUser.getEmail(),
+                appUser.getAge(),
+                appUser.getPassword(),
+                appUser.getAppUserRole(),
+                appUser.getUsername(),
+                appUser.getEnabled(),
+                appUser.getLocked()
+        ));
     }
 
     public void enableAppUser(String email) {

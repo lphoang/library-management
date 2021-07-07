@@ -23,6 +23,7 @@ public class RegistrationController {
     public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest request){
         RegistrationResponse userResponse = registrationService.register(request);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
+//      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/register/confirm")
