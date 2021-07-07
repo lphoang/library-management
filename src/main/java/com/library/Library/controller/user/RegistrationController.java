@@ -1,4 +1,4 @@
-package com.library.Library.controller;
+package com.library.Library.controller.user;
 
 import com.library.Library.dto.responses.AuthenticateResponse;
 import com.library.Library.dto.requests.LoginRequest;

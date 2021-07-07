@@ -1,45 +1,82 @@
 package com.library.Library.security;
 
+import com.library.Library.constant.AppUserRole;
 import com.library.Library.entity.AppUser;
-import com.library.Library.exception.LibraryException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static io.jsonwebtoken.Jwts.parserBuilder;
 
 @Service
 public class JwtProvider {
-    private KeyStore keyStore;
-
-    @PostConstruct
-    public void init(){
+    public Key getPrivateKey() {
         try {
-            keyStore = KeyStore.getInstance("JKS");
-            InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
-            keyStore.load(resourceAsStream, "secret".toCharArray());
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-            throw new LibraryException("Exception occurred while loading keystore", e);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            KeyPair kp = kpg.generateKeyPair();
+            Key pvt = kp.getPrivate();
+            return pvt;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Something wrong happened when generating private key");
         }
     }
 
-    public String generateToken(Authentication authentication){
+    private Key getPublicKey() {
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            KeyPair kp = kpg.generateKeyPair();
+            Key pvt = kp.getPublic();
+            return pvt;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Something wrong happened when generating public key");
+        }
+    }
+
+    public String generateToken(Authentication authentication, AppUserRole role) {
         AppUser principal = (AppUser) authentication.getPrincipal();
+        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
+                .commaSeparatedStringToAuthorityList(role.name());
+
         return Jwts.builder()
                 .setSubject(principal.getEmail())
+                .claim("authorities",
+                        grantedAuthorities.stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList()))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 600000))
                 .signWith(getPrivateKey())
                 .compact();
     }
 
-    private PrivateKey getPrivateKey() {
-        try{
-            return (PrivateKey) keyStore.getKey("springblog", "secret".toCharArray());
-        }catch(KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e){
-            throw new LibraryException("Exception occurred while retrieving public key from keystore", e);
-        }
+    public boolean validateToken(String jwt) {
+        parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(jwt);
+        return true;
     }
+
+    public String getUsernameFromJwt(String token) {
+        Claims claims = parserBuilder()
+                .setSigningKey(getPublicKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
+    }
+
 }

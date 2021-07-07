@@ -10,7 +10,8 @@ import com.library.Library.repository.AppUserRepository;
 import com.library.Library.security.JwtProvider;
 import com.library.Library.service.impl.EmailSender;
 import com.library.Library.entity.ConfirmationToken;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,9 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.lang.String;
 
 @Service
-@AllArgsConstructor
 public class RegistrationService {
 
     private final AppUserService appUserService;
@@ -31,7 +32,27 @@ public class RegistrationService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
     private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider = new JwtProvider();
+    @Value("${email.baseUrl}")
+    private final String baseUrl;
+
+    @Autowired
+    public RegistrationService(
+            AppUserService appUserService,
+            AppUserRepository appUserRepository,
+            EmailValidator emailValidator,
+            ConfirmationTokenService confirmationTokenService,
+            EmailSender emailSender,
+            AuthenticationManager authenticationManager,
+            @Value("${email.baseUrl}") String baseUrl) {
+        this.appUserService = appUserService;
+        this.appUserRepository = appUserRepository;
+        this.emailValidator = emailValidator;
+        this.confirmationTokenService = confirmationTokenService;
+        this.emailSender = emailSender;
+        this.authenticationManager = authenticationManager;
+        this.baseUrl = baseUrl;
+    }
 
     public RegistrationResponse register(RegistrationRequest request) {
         //Exception for empty input
@@ -67,7 +88,8 @@ public class RegistrationService {
                 )
         );
         String token = userInfo.getVerifiedToken();
-        String link = "http://localhost:8080/user/register/confirm?token=" + token;
+        String link = baseUrl + "/user/register/confirm?token=" + token;
+        System.out.println(link);
         emailSender.send(
                 request.getEmail(),
                 buildEmail(request.getFirstName(), link));
@@ -122,7 +144,7 @@ public class RegistrationService {
                         request.getEmail(),
                         request.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(auth);
-        String accessToken = jwtProvider.generateToken(auth);
+        String accessToken = jwtProvider.generateToken(auth, AppUserRole.USER);
         return new AuthenticateResponse(accessToken, request.getEmail());
     }
 
