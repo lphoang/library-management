@@ -4,6 +4,8 @@ import com.library.Library.constant.AppUserRole;
 import com.library.Library.entity.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -34,7 +36,7 @@ public class JwtProvider {
         }
     }
 
-    private Key getPublicKey() {
+    Key getPublicKey() {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(2048);
@@ -47,6 +49,7 @@ public class JwtProvider {
         }
     }
 
+    @Async
     public String generateToken(Authentication authentication, AppUserRole role) {
         AppUser principal = (AppUser) authentication.getPrincipal();
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
@@ -75,7 +78,6 @@ public class JwtProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
         return claims.getSubject();
     }
 

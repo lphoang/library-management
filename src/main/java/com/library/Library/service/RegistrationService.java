@@ -25,11 +25,10 @@ import java.lang.String;
 import java.util.Optional;
 
 @Service
-public class RegistrationService {
+public class RegistrationService{
 
     private final AppUserService appUserService;
     private final AppUserRepository appUserRepository;
-    private final EmailValidator emailValidator;
 
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
@@ -42,14 +41,12 @@ public class RegistrationService {
     public RegistrationService(
             AppUserService appUserService,
             AppUserRepository appUserRepository,
-            EmailValidator emailValidator,
             ConfirmationTokenService confirmationTokenService,
             EmailSender emailSender,
             AuthenticationManager authenticationManager,
             @Value("${email.baseUrl}") String baseUrl) {
         this.appUserService = appUserService;
         this.appUserRepository = appUserRepository;
-        this.emailValidator = emailValidator;
         this.confirmationTokenService = confirmationTokenService;
         this.emailSender = emailSender;
         this.authenticationManager = authenticationManager;
@@ -57,28 +54,6 @@ public class RegistrationService {
     }
 
     public RegistrationResponse register(RegistrationRequest request) {
-        //Exception for empty input
-        if(request.getEmail() == null ) {
-            throw new IllegalStateException("Email is required");
-        }
-        if(request.getPassword() == null ){
-            throw new IllegalStateException("Password is required");
-        }
-        if(request.getFirstName() == null ) {
-            throw new IllegalStateException("Firstname is required");
-        }
-        if(request.getLastName() == null ) {
-            throw new IllegalStateException("Lastname is required");
-        }
-        if(request.getAge() == null ){
-            throw new IllegalStateException("Age is required");
-        }
-        boolean isValidEmail = emailValidator
-                .test(request.getEmail());
-        if (!isValidEmail) {
-            throw new IllegalStateException("Email is not valid");
-        }
-
         RegistrationResponse userInfo = appUserService.signUpUser(
                 new AppUser(
                         request.getFirstName(),
@@ -94,7 +69,7 @@ public class RegistrationService {
         System.out.println(link);
         emailSender.send(
                 request.getEmail(),
-                buildEmail(request.getFirstName(), link));
+                buildEmail(request.getLastName(), link));
         return userInfo;
     }
 
@@ -122,25 +97,6 @@ public class RegistrationService {
     }
 
     public AuthenticateResponse login(LoginRequest request) {
-        //Exception for empty input
-        if(request.getEmail() == null ){
-            throw new IllegalStateException("Email is required");
-        }
-        if(request.getPassword() == null ){
-            throw new IllegalStateException("Password is required");
-        }
-        //Exception for access denied
-        boolean isExist = appUserRepository.findByEmail(request.getEmail()).isPresent();
-        if(!isExist){
-            throw new IllegalStateException("Unauthorized");
-        }else{
-            //Exception for not verifying email
-            boolean isVerified = appUserRepository.findByEmail(request.getEmail()).get().getEnabled();
-            if(!isVerified){
-                throw new IllegalStateException("Verify your email to login");
-            }
-        }
-
         Optional<AppUser> appUser = appUserRepository.findByEmail(request.getEmail());
 
         Authentication auth = authenticationManager
@@ -163,7 +119,7 @@ public class RegistrationService {
         ));
     }
 
-    private String buildEmail(String name, String link) {
+    public String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +

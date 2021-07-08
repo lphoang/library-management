@@ -21,15 +21,10 @@ public class AppUser implements UserDetails {
     @GeneratedValue(generator="uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
     private String id;
-    @Column(nullable = false)
     private String firstName;
-    @Column(nullable = false)
     private String lastName;
-    @Column(nullable = false)
     private String email;
-    @Column(nullable = false)
     private Integer age;
-    @Column(nullable = false)
     private String password;
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
