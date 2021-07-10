@@ -1,11 +1,12 @@
 package com.library.Library.security.config;
 
 import com.library.Library.security.JwtAuthenticationFilter;
+import com.library.Library.security.JwtProvider;
 import com.library.Library.service.AppUserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.BeanIds;
@@ -38,10 +39,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
         http.cors().and()
                 .csrf().disable()
+                .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/user/**")
-                    .permitAll()
-                    .antMatchers("/admin/**").hasAuthority("ADMIN")
+                    .antMatchers("/user/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/books/**").permitAll()
+                    .antMatchers(HttpMethod.POST,"/admin/register").hasAuthority("ADMIN")
+                    .antMatchers(HttpMethod.POST, "/admin/login").permitAll()
+                    .antMatchers("/admin/books/**").hasAuthority("ADMIN")
                     .antMatchers("/v2/api-docs",
                             "/configuration/ui",
                             "/swagger-resources/**",

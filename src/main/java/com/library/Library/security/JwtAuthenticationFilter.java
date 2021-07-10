@@ -1,12 +1,10 @@
 package com.library.Library.security;
 
+import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -14,43 +12,62 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
-    private final UserDetailsService userDetailsService;
-
-    public JwtAuthenticationFilter(JwtProvider jwtProvider, UserDetailsService userDetailsService) {
-        this.jwtProvider = jwtProvider;
-        this.userDetailsService = userDetailsService;
-    }
+    private final String HEADER = "Authorization";
+    private final String PREFIX = "Bearer ";
+    private final String SECRET = "lephuochoang98tcv@gmail.com_and_this_is_my_password_==>";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        String jwt = getJwtFromRequest(request);
-
-        if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
-            String username = jwtProvider.getUsernameFromJwt(jwt);
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
-                    null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        try {
+            if (checkJWTToken(request, response)) {
+                Claims claims = validateToken(request);
+                if (claims.get("authorities") != null) {
+                    setUpSpringAuthentication(claims);
+                } else {
+                    SecurityContextHolder.clearContext();
+                }
+            }else {
+                SecurityContextHolder.clearContext();
+            }
+            chain.doFilter(request, response);
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+            return;
         }
-        filterChain.doFilter(request, response);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+    private Claims validateToken(HttpServletRequest request) {
+        String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
+        return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
+    }
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return bearerToken;
+
+    /**
+     * Authentication method in Spring flow
+     *
+     * @param claims
+     */
+    private void setUpSpringAuthentication(Claims claims) {
+        @SuppressWarnings("unchecked")
+        List<String> authorities = (List) claims.get("authorities");
+
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
+                authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+    }
+
+    private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse res) {
+        String authenticationHeader = request.getHeader(HEADER);
+        if (authenticationHeader == null || !authenticationHeader.startsWith(PREFIX))
+            return false;
+        return true;
     }
 }
