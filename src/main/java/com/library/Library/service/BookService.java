@@ -1,93 +1,130 @@
 package com.library.Library.service;
 
+import com.library.Library.dto.requests.BookCreateRequest;
+import com.library.Library.dto.responses.BookResponse;
 import com.library.Library.entity.Author;
 import com.library.Library.entity.Book;
 import com.library.Library.entity.BookGenre;
-import com.library.Library.exception.BookNotFoundException;
 import com.library.Library.repository.AuthorRepository;
 import com.library.Library.repository.BookGenreRepository;
 import com.library.Library.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.*;
 
 //Try adding @Transactional over the service method where you are trying to access lob field object.
 //When error "org.hibernate.HibernateException: Unable to access lob stream" happening
 @Transactional
 @Service
+@AllArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final BookGenreRepository bookGenreRepository;
 
-    @Autowired
-    public BookService(BookRepository bookRepository,
-                       AuthorRepository authorRepository,
-                       BookGenreRepository bookGenreRepository) {
-        this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.bookGenreRepository = bookGenreRepository;
-    }
 
-
-    public Book addBook(Book book) {
+    public ResponseEntity<Book> addBook(BookCreateRequest request) {
         boolean isBookExist = bookRepository
-                .findBookByTitle(book.getTitle())
+                .findBookByTitle(request.getTitle())
                 .isPresent();
-        if (isBookExist) throw new IllegalStateException("This book is already in library");
+        if (isBookExist)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This book is already in library");
+        else {
+            Author author = new Author(request.getAuthor());
+            BookGenre bookGenre = new BookGenre(request.getBookGenre());
+            boolean isAuthorExist = authorRepository
+                    .findAuthorByFullName(request.getAuthor())
+                    .isPresent();
 
-        boolean isAuthorExist = authorRepository
-                .findAuthorByFullName(book.getAuthor())
-                .isPresent();
+            if (!isAuthorExist) {
+                authorRepository.save(author);
+            }
 
-        if (!isAuthorExist) {
-            Author author = new Author(
-                    book.getAuthor()
+            boolean isGenreExist = bookGenreRepository
+                    .findGenreByTitle(request.getBookGenre())
+                    .isPresent();
+
+            if (!isGenreExist) {
+                bookGenreRepository.save(bookGenre);
+            }
+            Book book = new Book(
+                    bookGenre,
+                    author,
+                    request.getTitle(),
+                    request.getReleaseDate(),
+                    request.getDescription(),
+                    request.getScore(),
+                    request.getPrice(),
+                    request.getThumbnail()
             );
-            authorRepository.save(author);
+            return new ResponseEntity<>(bookRepository.save(book), HttpStatus.CREATED);
         }
-
-        boolean isGenreExist = bookGenreRepository
-                .findGenreByTitle(book.getBookGenre())
-                .isPresent();
-
-        if (!isGenreExist) {
-            BookGenre bookGenre = new BookGenre(
-                    book.getBookGenre()
-            );
-            bookGenreRepository.save(bookGenre);
-        }
-
-        return bookRepository.save(book);
     }
 
-    public List<Book> findAllBooks() {
-        return bookRepository.findAll();
+    public ResponseEntity<Map<String, Object>> findAllBooks(int page, int size) {
+        try {
+            Pageable paging = PageRequest.of(page, size);
+
+            Page<Book> paginationBooks = bookRepository.findAll(paging);
+            List<Book> books = paginationBooks.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("data", books);
+            response.put("currentPage", paginationBooks.getNumber());
+            response.put("totalItems", paginationBooks.getTotalElements());
+            response.put("totalPages", paginationBooks.getTotalPages());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public Book updateBook(Book book, String id) {
+    public ResponseEntity<Book> updateBook(Book book, String id) {
         Book oldInfo = bookRepository.getById(id);
         boolean isBookExist = bookRepository
                 .findBookById(id)
                 .isPresent();
-        if (!isBookExist) throw new IllegalStateException("This book is not in library");
+        if (!isBookExist) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This book is not in library");
         oldInfo.setTitle(book.getTitle());
         oldInfo.setDescription(book.getDescription());
         oldInfo.setScore(book.getScore());
         oldInfo.setReleaseDate(book.getReleaseDate());
         oldInfo.setPrice(book.getPrice());
         oldInfo.setThumbnail(book.getThumbnail());
-        return bookRepository.save(oldInfo);
+        return new ResponseEntity<>(bookRepository.save(oldInfo), HttpStatus.OK);
     }
 
-    public Book findBookById(String id) {
-        return bookRepository.findBookById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book by id = " + id + " was not found"));
+    public ResponseEntity<BookResponse> findBookById(String id) {
+        Optional<Book> book = bookRepository.findBookById(id);
+        if (!book.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no book found with above id");
+        }
+        BookResponse response = new BookResponse(
+                book.get().getTitle(),
+                book.get().getAuthor().getFullName(),
+                book.get().getBookGenre().getTitle(),
+                book.get().getDescription(),
+                book.get().getScore(),
+                book.get().getPrice(),
+                book.get().getReleaseDate(),
+                book.get().getThumbnail()
+                );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public void deleteBook(String id) {
+        if (!bookRepository.findBookById(id).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no book found with above id");
+        }
         bookRepository.deleteBookById(id);
     }
 

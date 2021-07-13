@@ -3,17 +3,17 @@ package com.library.Library.repository;
 import com.library.Library.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface BookRepository extends JpaRepository<Book, String> {
     void deleteBookById(String id);
 
     Optional<Book> findBookById(String id);
-
     Optional<Book> findBookByTitle(String title);
-
 
     //Search
     @Query("SELECT b FROM Book b WHERE LOWER(b.title) LIKE %?1%")

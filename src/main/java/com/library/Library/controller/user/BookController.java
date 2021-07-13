@@ -1,5 +1,6 @@
 package com.library.Library.controller.user;
 
+import com.library.Library.dto.responses.BookResponse;
 import com.library.Library.entity.Book;
 import com.library.Library.service.BookService;
 import lombok.AllArgsConstructor;
@@ -8,51 +9,50 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/books")
+@AllArgsConstructor
 public class BookController {
 
     private final BookService bookService;
 
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBook(@PathVariable String id) {
-        Book book = bookService.findBookById(id);
-        return new ResponseEntity<>(book, HttpStatus.OK);
+    public ResponseEntity<BookResponse> getBook(@PathVariable String id) {
+        return bookService.findBookById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.findAllBooks();
-        return new ResponseEntity<>(books, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllBooks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        return bookService.findAllBooks(page, size);
     }
 
     @GetMapping(value = "/search", params = "t")
-    public ResponseEntity<List<Book>> getBooksByTitle(@RequestParam String t) {
+    public ResponseEntity<List<Book>> getBooksByTitle(@RequestParam("t") String t) {
         return new ResponseEntity<>(bookService.findBooksByTitle(t), HttpStatus.OK);
     }
 
     @GetMapping(value = "/search", params = "a")
-    public ResponseEntity<List<Book>> getBooksByAuthor(@RequestParam String a) {
+    public ResponseEntity<List<Book>> getBooksByAuthor(@RequestParam("a") String a) {
         return new ResponseEntity<>(bookService.findBooksByAuthor(a), HttpStatus.OK);
     }
 
     @GetMapping(value = "/search", params = "bg")
-    public ResponseEntity<List<Book>> getBooksByBookGenre(@RequestParam String bg) {
+    public ResponseEntity<List<Book>> getBooksByBookGenre(@RequestParam("bg") String bg) {
         return new ResponseEntity<>(bookService.findBooksByBookGenre(bg), HttpStatus.OK);
     }
 
     @GetMapping(value = "/search", params = {"ls", "hs"})
-    public ResponseEntity<List<Book>> getBooksByScore(@RequestParam Double ls, @RequestParam Double hs) {
+    public ResponseEntity<List<Book>> getBooksByScore(@RequestParam("ls") Double ls, @RequestParam("hs") Double hs) {
         return new ResponseEntity<>(bookService.findBooksByScore(ls, hs), HttpStatus.OK);
     }
 
     @GetMapping(value = "/search", params = {"lp", "hp"})
-    public ResponseEntity<List<Book>> getBooksByPrice(@RequestParam Double lp, @RequestParam Double hp) {
+    public ResponseEntity<List<Book>> getBooksByPrice(@RequestParam("lp") Double lp, @RequestParam("hp") Double hp) {
         return new ResponseEntity<>(bookService.findBooksByPrice(lp, hp), HttpStatus.OK);
     }
 

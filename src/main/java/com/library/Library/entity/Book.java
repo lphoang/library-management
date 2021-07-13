@@ -14,14 +14,22 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Book implements Serializable {
     @Id
-    @GeneratedValue(generator="uuid2")
-    @GenericGenerator(name="uuid2", strategy = "uuid2")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(nullable = false, updatable = false)
     private String id;
-    @Column(nullable = false)
-    private String bookGenre;
-    @Column(nullable = false)
-    private String author;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(
+            nullable = false,
+            name = "book_genre_id"
+    )
+    private BookGenre bookGenre;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(
+            nullable = false,
+            name = "author_id"
+    )
+    private Author author;
     private String title;
     private String releaseDate;
     @Lob
@@ -31,8 +39,8 @@ public class Book implements Serializable {
     private String thumbnail;
 
     public Book(
-            String bookGenre,
-            String author,
+            BookGenre bookGenre,
+            Author author,
             String title,
             String releaseDate,
             String description,
@@ -50,7 +58,7 @@ public class Book implements Serializable {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Book{" +
                 "id = " + id + '\'' +
                 ", title = " + title + '\'' +
