@@ -1,7 +1,6 @@
 package com.library.Library.security.config;
 
 import com.library.Library.security.JwtAuthenticationFilter;
-import com.library.Library.security.JwtProvider;
 import com.library.Library.service.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -60,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 

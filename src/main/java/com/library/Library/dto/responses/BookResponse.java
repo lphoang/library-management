@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class BookResponse {
+    private String id;
     private String title;
     private String author;
     private String bookGenre;

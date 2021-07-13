@@ -40,21 +40,14 @@ public class BookService {
         else {
             Author author = new Author(request.getAuthor());
             BookGenre bookGenre = new BookGenre(request.getBookGenre());
-            boolean isAuthorExist = authorRepository
-                    .findAuthorByFullName(request.getAuthor())
-                    .isPresent();
 
-            if (!isAuthorExist) {
+            if (!authorRepository.existsAuthorByFullName(request.getAuthor())) {
                 authorRepository.save(author);
             }
-
-            boolean isGenreExist = bookGenreRepository
-                    .findGenreByTitle(request.getBookGenre())
-                    .isPresent();
-
-            if (!isGenreExist) {
+            if (!bookGenreRepository.existsBookGenreByTitle(request.getBookGenre())) {
                 bookGenreRepository.save(bookGenre);
             }
+
             Book book = new Book(
                     bookGenre,
                     author,
@@ -88,7 +81,7 @@ public class BookService {
         }
     }
 
-    public ResponseEntity<Book> updateBook(Book book, String id) {
+    public ResponseEntity<Book> updateBook(BookCreateRequest book, String id) {
         Book oldInfo = bookRepository.getById(id);
         boolean isBookExist = bookRepository
                 .findBookById(id)
@@ -109,6 +102,7 @@ public class BookService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no book found with above id");
         }
         BookResponse response = new BookResponse(
+                book.get().getId(),
                 book.get().getTitle(),
                 book.get().getAuthor().getFullName(),
                 book.get().getBookGenre().getTitle(),
@@ -117,7 +111,7 @@ public class BookService {
                 book.get().getPrice(),
                 book.get().getReleaseDate(),
                 book.get().getThumbnail()
-                );
+        );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -15,6 +17,9 @@ public class Author {
     @GenericGenerator(name="uuid2", strategy = "uuid2")
     private String id;
     private String fullName;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<Book> bookSet = new HashSet<>();
 
     public Author(String fullName) {
         this.fullName = fullName;

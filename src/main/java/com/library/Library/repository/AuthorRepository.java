@@ -9,5 +9,7 @@ import java.util.Optional;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, String> {
     Optional<Author> findAuthorById(String id);
-    Optional<Author> findAuthorByFullName(String author);
+    Optional<Author> findAuthorByFullName(String fullName);
+
+    Boolean existsAuthorByFullName(String fullName);
 }

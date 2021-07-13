@@ -20,8 +20,9 @@ public class AdminBookController {
         return bookService.addBook(request);
     }
 
+    //TODO check again
     @PutMapping("/update/{id}")
-    public ResponseEntity<Book> updateBookDetails(@RequestBody Book book, @PathVariable("id") String id) {
+    public ResponseEntity<Book> updateBookDetails(@RequestBody BookCreateRequest book, @PathVariable("id") String id) {
         return bookService.updateBook(book, id);
     }
 
