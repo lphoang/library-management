@@ -80,9 +80,24 @@ public class BookService {
 
             Page<Book> paginationBooks = bookRepository.findAll(paging);
             List<Book> books = paginationBooks.getContent();
+            List<BookResponse> bookResponses = new ArrayList<>();
+            for (Book book : books){
+                BookResponse bookResponse = new BookResponse(
+                        book.getId(),
+                        book.getTitle(),
+                        book.getAuthor().getFullName(),
+                        book.getBookGenre().getTitle(),
+                        book.getDescription(),
+                        book.getScore(),
+                        book.getPrice(),
+                        book.getReleaseDate(),
+                        book.getThumbnail()
+                );
+                bookResponses.add(bookResponse);
+            }
 
             Map<String, Object> response = new HashMap<>();
-            response.put("data", books);
+            response.put("data", bookResponses);
             response.put("currentPage", paginationBooks.getNumber());
             response.put("totalItems", paginationBooks.getTotalElements());
             response.put("totalPages", paginationBooks.getTotalPages());
