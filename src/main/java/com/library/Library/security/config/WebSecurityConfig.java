@@ -41,8 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers("/user/**").permitAll()
+                    .antMatchers("/authors/**").permitAll()
+                    .antMatchers("/genres/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/books/**").permitAll()
-                    .antMatchers(HttpMethod.POST,"/admin/register").hasAuthority("ADMIN")
+                    .antMatchers(HttpMethod.POST,"/admin/register").permitAll()
                     .antMatchers(HttpMethod.POST, "/admin/login").permitAll()
                     .antMatchers("/admin/books/**").hasAuthority("ADMIN")
                     .antMatchers("/v2/api-docs",

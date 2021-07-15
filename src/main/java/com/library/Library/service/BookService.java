@@ -9,6 +9,8 @@ import com.library.Library.repository.AuthorRepository;
 import com.library.Library.repository.BookGenreRepository;
 import com.library.Library.repository.BookRepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +31,8 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final BookGenreRepository bookGenreRepository;
+    private final static Logger LOGGER = LoggerFactory
+            .getLogger(EmailService.class);
 
 
     public ResponseEntity<Book> addBook(BookCreateRequest request) {
@@ -38,14 +42,22 @@ public class BookService {
         if (isBookExist)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This book is already in library");
         else {
-            Author author = new Author(request.getAuthor());
-            BookGenre bookGenre = new BookGenre(request.getBookGenre());
-
-            if (!authorRepository.existsAuthorByFullName(request.getAuthor())) {
+            Author author;
+            BookGenre bookGenre;
+            Boolean isAuthorExists = authorRepository.existsAuthorByFullName(request.getAuthor());
+            Boolean isBookGenreExists = bookGenreRepository.existsBookGenreByTitle(request.getBookGenre());
+            LOGGER.error(isAuthorExists + " " + isBookGenreExists);
+            if (!isAuthorExists) {
+                author = new Author(request.getAuthor());
                 authorRepository.save(author);
+            }else{
+                author = authorRepository.findAuthorByFullName(request.getAuthor());
             }
-            if (!bookGenreRepository.existsBookGenreByTitle(request.getBookGenre())) {
+            if (!isBookGenreExists) {
+                bookGenre = new BookGenre(request.getBookGenre());
                 bookGenreRepository.save(bookGenre);
+            }else{
+                bookGenre = bookGenreRepository.findBookGenreByTitle(request.getBookGenre());
             }
 
             Book book = new Book(
