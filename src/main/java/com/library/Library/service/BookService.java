@@ -1,7 +1,9 @@
 package com.library.Library.service;
 
 import com.library.Library.dto.requests.BookCreateRequest;
+import com.library.Library.dto.responses.AuthorIdAndFullName;
 import com.library.Library.dto.responses.BookResponse;
+import com.library.Library.dto.responses.GenreIdAndTitle;
 import com.library.Library.entity.Author;
 import com.library.Library.entity.Book;
 import com.library.Library.entity.BookGenre;
@@ -85,8 +87,14 @@ public class BookService {
                 BookResponse bookResponse = new BookResponse(
                         book.getId(),
                         book.getTitle(),
-                        book.getAuthor().getFullName(),
-                        book.getBookGenre().getTitle(),
+                        new AuthorIdAndFullName(
+                                book.getAuthor().getId(),
+                                book.getAuthor().getFullName()
+                        ),
+                        new GenreIdAndTitle(
+                                book.getBookGenre().getId(),
+                                book.getBookGenre().getTitle()
+                        ),
                         book.getDescription(),
                         book.getScore(),
                         book.getPrice(),
@@ -131,8 +139,14 @@ public class BookService {
         BookResponse response = new BookResponse(
                 book.get().getId(),
                 book.get().getTitle(),
-                book.get().getAuthor().getFullName(),
-                book.get().getBookGenre().getTitle(),
+                new AuthorIdAndFullName(
+                        book.get().getAuthor().getId(),
+                        book.get().getAuthor().getFullName()
+                ),
+                new GenreIdAndTitle(
+                        book.get().getBookGenre().getId(),
+                        book.get().getBookGenre().getTitle()
+                ),
                 book.get().getDescription(),
                 book.get().getScore(),
                 book.get().getPrice(),

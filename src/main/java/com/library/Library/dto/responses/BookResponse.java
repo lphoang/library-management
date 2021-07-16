@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class BookResponse {
     private String id;
     private String title;
-    private String author;
-    private String bookGenre;
+    private AuthorIdAndFullName author;
+    private GenreIdAndTitle bookGenre;
     private String description;
     private Double score;
     private Double price;
