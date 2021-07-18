@@ -6,17 +6,18 @@ import com.library.Library.entity.AppUser;
 import com.library.Library.entity.ConfirmationToken;
 import com.library.Library.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -76,5 +77,13 @@ public class AppUserService implements UserDetailsService {
 
     public void enableAppUser(String email) {
         appUserRepository.enableAppUser(email);
+    }
+
+    @Transactional
+    public ResponseEntity<Optional<AppUser>> getUserInfo(String id){
+        if(appUserRepository.existsById(id)){
+            return new ResponseEntity<>(appUserRepository.findById(id), HttpStatus.OK);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no user found");
     }
 }

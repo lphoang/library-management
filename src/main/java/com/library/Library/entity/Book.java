@@ -18,14 +18,14 @@ public class Book{
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(nullable = false, updatable = false)
     private String id;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(
             nullable = false,
             name = "book_genre_id"
     )
     @JsonIgnore
     private BookGenre bookGenre;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(
             nullable = false,
             name = "author_id"

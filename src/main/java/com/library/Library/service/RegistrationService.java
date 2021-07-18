@@ -39,6 +39,7 @@ public class RegistrationService{
     private final AppUserService appUserService;
     private final AppUserRepository appUserRepository;
 
+
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
@@ -52,8 +53,7 @@ public class RegistrationService{
     @Autowired
     public RegistrationService(
             AppUserService appUserService,
-            AppUserRepository appUserRepository,
-            ConfirmationTokenService confirmationTokenService,
+            AppUserRepository appUserRepository, ConfirmationTokenService confirmationTokenService,
             EmailSender emailSender,
             AuthenticationManager authenticationManager,
             @Value("${email.baseUrl}") String baseUrl) {

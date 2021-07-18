@@ -18,16 +18,12 @@ public class ConfirmationToken {
     @GeneratedValue(generator="uuid2")
     @GenericGenerator(name="uuid2", strategy = "uuid2")
     private String id;
-
     @Column(nullable = false)
     private String token;
-
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
     @Column(nullable = false)
     private LocalDateTime expiredAt;
-
     private LocalDateTime confirmedAt;
 
     @ManyToOne
@@ -36,7 +32,6 @@ public class ConfirmationToken {
             name = "app_user_id"
     )
     private AppUser appUser;
-
 
     public ConfirmationToken(
             String token,
