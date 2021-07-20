@@ -33,10 +33,10 @@ public class AppUser implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
 
-    @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Fetch(FetchMode.JOIN)
-//    @JsonIgnore
-    private Set<Cart> carts = new HashSet<>();
+//    @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @Fetch(FetchMode.JOIN)
+////    @JsonIgnore
+//    private Set<Cart> carts = new HashSet<>();
 
     //cmd + N to generate constructor
     public AppUser(

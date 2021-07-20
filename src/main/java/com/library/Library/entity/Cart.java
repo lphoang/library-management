@@ -9,8 +9,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -22,31 +20,19 @@ public class Cart {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private String id;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Book> items = new HashSet<>();
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_id")
+    private Book book;
     @JoinColumn(name = "app_user_id", nullable = false)
     @ManyToOne
     @JsonIgnore
     private AppUser appUser;
-    private Double total;
     @Column(nullable = false)
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime paidAt;
-    private Boolean isPaid = false;
 
-    public Cart(Set<Book> items, AppUser appUser, Double total, LocalDateTime createdAt) {
-        this.items = items;
-        this.appUser = appUser;
-        this.total = total;
-        this.createdAt = createdAt;
-    }
-
-    public Cart(AppUser appUser, Double total, LocalDateTime createdAt) {
+    public Cart(Book book, AppUser appUser, LocalDateTime createdAt) {
+        this.book = book;
         this.appUser = appUser;
         this.createdAt = createdAt;
-        this.total = total;
     }
 }

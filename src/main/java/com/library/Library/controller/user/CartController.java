@@ -8,11 +8,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "/order")
+@RequestMapping(path = "/cart")
 public class CartController {
     private final CartService cartService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Cart>> getItems(@PathVariable("id") String id){
+        return cartService.getCartsByUser(id);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<Cart> addItem(@RequestBody AddItemRequest request){

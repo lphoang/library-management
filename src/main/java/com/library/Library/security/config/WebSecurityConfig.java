@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/user/register").permitAll()
+                .antMatchers("/user/register/**").permitAll()
                 .antMatchers("/user/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/info/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/authors/**").permitAll()
@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/admin/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/admin/login").permitAll()
                 .antMatchers("/admin/books/**").hasAuthority("ADMIN")
-                .antMatchers(HttpMethod.POST,"/order/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.POST,"/cart/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",
