@@ -30,32 +30,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception{
+    protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
                 .csrf().disable()
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/user/**").permitAll()
-                    .antMatchers(HttpMethod.GET,"/user/info/**").hasAnyAuthority("USER", "ADMIN")
-                    .antMatchers("/authors/**").permitAll()
-                    .antMatchers("/genres/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/books/**").permitAll()
-                    .antMatchers(HttpMethod.POST,"/admin/register").permitAll()
-                    .antMatchers(HttpMethod.POST, "/admin/login").permitAll()
-                    .antMatchers("/admin/books/**").hasAuthority("ADMIN")
-                    .antMatchers("/order/**").hasAuthority("USER")
-                    .antMatchers("/v2/api-docs",
-                            "/configuration/ui",
-                            "/swagger-resources/**",
-                            "/configuration/security",
-                            "/swagger-ui.html",
-                            "/webjars/**")
-                    .permitAll()
+                .antMatchers("/user/register").permitAll()
+                .antMatchers("/user/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/info/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/authors/**").permitAll()
+                .antMatchers("/genres/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/books/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/admin/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/admin/login").permitAll()
+                .antMatchers("/admin/books/**").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST,"/order/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated();
         http.addFilterBefore(jwtAuthenticationFilter,
@@ -68,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
