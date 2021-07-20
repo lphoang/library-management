@@ -38,7 +38,7 @@ public class RegistrationController {
         return registrationService.login(request);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/info/{id}")
     public ResponseEntity<Optional<AppUser>> getUserInfo(@PathVariable("id") String id){
         return appUserService.getUserInfo(id);
     }
