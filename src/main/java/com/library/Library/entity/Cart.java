@@ -44,7 +44,7 @@ public class Cart {
         this.createdAt = createdAt;
     }
 
-    public Cart( AppUser appUser, Double total, LocalDateTime createdAt) {
+    public Cart(AppUser appUser, Double total, LocalDateTime createdAt) {
         this.appUser = appUser;
         this.createdAt = createdAt;
         this.total = total;
