@@ -12,7 +12,8 @@ public interface CartRepository extends JpaRepository<Cart, String> {
 
     Optional<Cart> findById(String id);
     List<Cart> findCartsByAppUser(AppUser appUser);
-    Cart findCartByBook(Book book);
+    Cart findCartByBookAndAppUser(Book book, AppUser appUser);
+    Boolean existsByBookAndAppUser(Book book, AppUser appUser);
 
     void deleteByAppUser(AppUser appUser);
     void deleteCartByBook(Book book);

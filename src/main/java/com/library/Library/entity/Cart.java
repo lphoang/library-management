@@ -27,11 +27,13 @@ public class Cart {
     @ManyToOne
     @JsonIgnore
     private AppUser appUser;
+    private Integer quantity;
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public Cart(Book book, AppUser appUser, LocalDateTime createdAt) {
+    public Cart(Book book, Integer quantity, AppUser appUser, LocalDateTime createdAt) {
         this.book = book;
+        this.quantity = quantity;
         this.appUser = appUser;
         this.createdAt = createdAt;
     }
