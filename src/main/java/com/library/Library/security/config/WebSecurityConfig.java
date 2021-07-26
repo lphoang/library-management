@@ -43,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/register/**").permitAll()
                 .antMatchers("/user/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/info/**").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/user/cart/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/authors/**").permitAll()
                 .antMatchers("/genres/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/books/**").permitAll()

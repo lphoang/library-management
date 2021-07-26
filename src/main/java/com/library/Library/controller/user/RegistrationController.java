@@ -5,7 +5,9 @@ import com.library.Library.dto.requests.LoginRequest;
 import com.library.Library.dto.requests.RegistrationRequest;
 import com.library.Library.dto.responses.RegistrationResponse;
 import com.library.Library.entity.AppUser;
+import com.library.Library.entity.CheckoutCart;
 import com.library.Library.service.impl.AppUserService;
+import com.library.Library.service.impl.CheckoutCartService;
 import com.library.Library.service.impl.RegistrationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
     private final AppUserService appUserService;
+    private final CheckoutCartService checkoutCartService;
 
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest request) {
@@ -41,5 +44,10 @@ public class RegistrationController {
     @GetMapping("/info/{id}")
     public ResponseEntity<Optional<AppUser>> getUserInfo(@PathVariable("id") String id){
         return appUserService.getUserInfo(id);
+    }
+
+    @GetMapping("/cart/{id}")
+    public ResponseEntity<CheckoutCart> getCheckOutCartById(@PathVariable("id") String id){
+        return checkoutCartService.getCheckoutCartById(id);
     }
 }

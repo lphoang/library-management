@@ -54,4 +54,13 @@ public class CheckoutCartService {
         }
     }
 }
+    @Transactional
+    public ResponseEntity<CheckoutCart> getCheckoutCartById(String id){
+        Optional<CheckoutCart> checkoutCart = checkoutCartRepository.findById(id);
+        if(checkoutCart.isPresent()){
+            return new ResponseEntity<>(checkoutCart.get(), HttpStatus.OK);
+        }else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There was no checked out cart found");
+        }
+    }
 }
