@@ -23,18 +23,20 @@ public class Cart {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
     private Book book;
-    @JoinColumn(name = "app_user_id", nullable = false)
-    @ManyToOne
+    @JoinColumn(name = "order_detail_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
-    private AppUser appUser;
+    private OrderDetail orderDetail;
     private Integer quantity;
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    private Double total;
 
-    public Cart(Book book, Integer quantity, AppUser appUser, LocalDateTime createdAt) {
+    public Cart(Book book, Integer quantity, OrderDetail orderDetail, LocalDateTime createdAt, Double total) {
         this.book = book;
         this.quantity = quantity;
-        this.appUser = appUser;
+        this.orderDetail = orderDetail;
         this.createdAt = createdAt;
+        this.total = total;
     }
 }

@@ -2,7 +2,7 @@ package com.library.Library.controller.admin;
 
 import com.library.Library.dto.requests.BookCreateRequest;
 import com.library.Library.entity.Book;
-import com.library.Library.service.BookService;
+import com.library.Library.service.impl.BookService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

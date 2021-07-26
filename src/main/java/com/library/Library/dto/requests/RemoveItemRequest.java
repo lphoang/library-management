@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class RemoveItemRequest {
     private String appUserId;
     private String bookId;
-    private String cartId;
 }

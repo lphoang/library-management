@@ -1,4 +1,4 @@
-package com.library.Library.service;
+package com.library.Library.service.impl;
 
 import com.library.Library.dto.requests.BookCreateRequest;
 import com.library.Library.dto.responses.AuthorIdAndFullName;
@@ -10,6 +10,7 @@ import com.library.Library.entity.BookGenre;
 import com.library.Library.repository.AuthorRepository;
 import com.library.Library.repository.BookGenreRepository;
 import com.library.Library.repository.BookRepository;
+import com.library.Library.service.impl.EmailService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

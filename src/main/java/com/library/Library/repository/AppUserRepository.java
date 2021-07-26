@@ -1,6 +1,8 @@
 package com.library.Library.repository;
 
 import com.library.Library.entity.AppUser;
+import com.library.Library.entity.Cart;
+import com.library.Library.entity.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

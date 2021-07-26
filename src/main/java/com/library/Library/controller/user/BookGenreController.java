@@ -2,7 +2,7 @@ package com.library.Library.controller.user;
 
 import com.library.Library.dto.responses.BookGenreResponse;
 import com.library.Library.entity.BookGenre;
-import com.library.Library.service.BookGenreService;
+import com.library.Library.service.impl.BookGenreService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

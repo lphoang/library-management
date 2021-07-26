@@ -1,4 +1,4 @@
-package com.library.Library.service;
+package com.library.Library.service.impl;
 
 import com.library.Library.dto.responses.AuthenticateResponse;
 import com.library.Library.dto.requests.LoginRequest;
@@ -9,8 +9,10 @@ import com.library.Library.entity.AppUser;
 import com.library.Library.constant.AppUserRole;
 import com.library.Library.repository.AppUserRepository;
 import com.library.Library.security.JwtProvider;
-import com.library.Library.service.impl.EmailSender;
 import com.library.Library.entity.ConfirmationToken;
+import com.library.Library.service.EmailSender;
+import com.library.Library.service.impl.AppUserService;
+import com.library.Library.service.impl.ConfirmationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

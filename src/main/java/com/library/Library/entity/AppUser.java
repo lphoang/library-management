@@ -1,6 +1,5 @@
 package com.library.Library.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.library.Library.constant.AppUserRole;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -33,10 +32,9 @@ public class AppUser implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
 
-//    @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @Fetch(FetchMode.JOIN)
-////    @JsonIgnore
-//    private Set<Cart> carts = new HashSet<>();
+    @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.JOIN)
+    private List<CheckoutCart> checkoutCart;
 
     //cmd + N to generate constructor
     public AppUser(

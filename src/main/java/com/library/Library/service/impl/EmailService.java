@@ -1,6 +1,6 @@
-package com.library.Library.service;
+package com.library.Library.service.impl;
 
-import com.library.Library.service.impl.EmailSender;
+import com.library.Library.service.EmailSender;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,7 +2,7 @@ package com.library.Library.controller.user;
 
 import com.library.Library.dto.responses.BookResponse;
 import com.library.Library.entity.Book;
-import com.library.Library.service.BookService;
+import com.library.Library.service.impl.BookService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/books")

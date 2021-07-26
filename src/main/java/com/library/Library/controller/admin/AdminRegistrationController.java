@@ -4,7 +4,7 @@ import com.library.Library.dto.requests.LoginRequest;
 import com.library.Library.dto.requests.RegistrationRequest;
 import com.library.Library.dto.responses.AuthenticateResponse;
 import com.library.Library.dto.responses.RegistrationResponse;
-import com.library.Library.service.RegistrationService;
+import com.library.Library.service.impl.RegistrationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

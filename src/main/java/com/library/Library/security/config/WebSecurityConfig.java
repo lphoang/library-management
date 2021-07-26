@@ -1,7 +1,7 @@
 package com.library.Library.security.config;
 
 import com.library.Library.security.JwtAuthenticationFilter;
-import com.library.Library.service.AppUserService;
+import com.library.Library.service.impl.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/admin/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/admin/login").permitAll()
                 .antMatchers("/admin/books/**").hasAuthority("ADMIN")
+                .antMatchers("/check-out/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers(HttpMethod.POST,"/cart/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",

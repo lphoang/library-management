@@ -2,7 +2,7 @@ package com.library.Library.controller.user;
 
 import com.library.Library.dto.responses.AuthorResponse;
 import com.library.Library.entity.Author;
-import com.library.Library.service.AuthorService;
+import com.library.Library.service.impl.AuthorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/authors")

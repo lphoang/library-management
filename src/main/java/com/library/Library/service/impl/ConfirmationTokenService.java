@@ -1,4 +1,4 @@
-package com.library.Library.service;
+package com.library.Library.service.impl;
 
 import com.library.Library.entity.ConfirmationToken;
 import com.library.Library.repository.ConfirmationTokenRepository;
