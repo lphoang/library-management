@@ -88,11 +88,11 @@ public class CartService {
         }
     }
 
-//    @Transactional
-//    public ResponseEntity<List<Cart>> getCartsByUser(String id) {
-//        AppUser appUser = appUserRepository.findById(id).get();
-//        return new ResponseEntity<>(cartRepository.findCartsByAppUser(appUser), HttpStatus.OK);
-//    }
+    @Transactional
+    public ResponseEntity<List<OrderDetail>> getOrderDetailsByUser(String id) {
+        AppUser appUser = appUserRepository.findById(id).get();
+        return new ResponseEntity<>(orderRepository.findOrderDetailByAppUser(appUser), HttpStatus.OK);
+    }
 
     @Transactional
     public void removeItem(RemoveItemRequest request) {
